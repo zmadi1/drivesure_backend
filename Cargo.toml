@@ -11,3 +11,10 @@ serde_json = "1.0"
 uuid = { version = "1.0", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 bcrypt = "0.15"
+
+# Change diesel line to include r2d2 feature:
+diesel = { version = "2.1", features = ["postgres", "uuid", "chrono", "r2d2"] }
+#diesel = { version = "2.1", features = ["postgres", "uuid", "chrono"] }
+diesel_migrations = { version = "2.1", features = ["postgres"] }
+dotenvy = "0.15"
+r2d2 = "0.8"

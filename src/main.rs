@@ -1,3 +1,5 @@
+
+/*
 mod models;
 mod handlers;
 mod state;
@@ -34,6 +36,54 @@ async fn welcome() -> actix_web::HttpResponse {
         "message": "Welcome to DriveSure API",
         "version": "0.1.0",
         "structure": "Clean modular architecture",
+        "endpoints": {
+            "health": "GET /health",
+            "create_user": "POST /api/users",
+            "list_users": "GET /api/users"
+        }
+    }))
+}
+*/
+
+// src/main.rs
+mod models;
+mod handlers;
+mod utils;
+mod api;
+mod database;
+mod schema;
+
+use actix_web::{web, App, HttpServer};
+use database::establish_connection;
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    // Set up database connection pool and run migrations
+    let pool = establish_connection();
+
+    println!("🌈 DriveSure Backend - WITH EMBEDDED MIGRATIONS!");
+    println!("📍 http://127.0.0.1:8080");
+    println!("🗄️  Database: PostgreSQL with embedded migrations");
+    println!("🚀 Migrations run automatically on startup!");
+    println!("========================");
+
+    HttpServer::new(move || {
+        App::new()
+            .app_data(web::Data::new(pool.clone()))
+            .configure(api::health_config)
+            .configure(api::config)
+            .route("/", web::get().to(welcome))
+    })
+    .bind("127.0.0.1:8080")?
+    .run()
+    .await
+}
+
+async fn welcome() -> actix_web::HttpResponse {
+    actix_web::HttpResponse::Ok().json(serde_json::json!({
+        "message": "Welcome to DriveSure API",
+        "version": "0.1.0",
+        "database": "PostgreSQL with embedded migrations",
         "endpoints": {
             "health": "GET /health",
             "create_user": "POST /api/users",

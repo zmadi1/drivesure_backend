@@ -1,6 +1,5 @@
 use actix_web::web;
 use crate::handlers;
-use crate::state::UserStore;
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(

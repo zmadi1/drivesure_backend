@@ -1,9 +1,7 @@
 -- Your SQL goes here
--- migrations/YYYYMMDDHHMMSS_create_users/up.sql
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
+-- Use gen_random_uuid() which doesn't need extensions
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL CHECK (role IN ('owner', 'driver')),
