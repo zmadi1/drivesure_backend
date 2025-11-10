@@ -1,4 +1,3 @@
-
 use actix_web::{web, HttpResponse};
 use diesel::prelude::*;
 use bcrypt::{hash, DEFAULT_COST};
@@ -16,16 +15,17 @@ pub async fn create_user(
         internal_error_response()
     }).unwrap();
 
+    // Check if email already exists - SIMPLE SYNTAX
     let existing_user = users::table
         .filter(users::email.eq(&user_data.email))
-        .select(User::as_select())
-        .first(conn)
+        .first::<User>(conn)
         .optional();
 
     if let Ok(Some(_)) = existing_user {
         return error_response("User with this email already exists", "EMAIL_EXISTS");
     }
 
+    // Hash password
     let hashed_password = match hash(&user_data.password, DEFAULT_COST) {
         Ok(h) => h,
         Err(_) => return error_response("Failed to hash password", "PASSWORD_HASH_ERROR"),
@@ -40,10 +40,10 @@ pub async fn create_user(
         phone: user_data.phone.clone(),
     };
 
+    // SIMPLE SYNTAX - no as_returning()
     match diesel::insert_into(users::table)
-        .values(new_user)
-        .returning(User::as_returning())
-        .get_result(conn)
+        .values(&new_user)
+        .get_result::<User>(conn)
     {
         Ok(user) => {
             let user_response = UserResponse::from(user);
@@ -63,10 +63,8 @@ pub async fn get_users(
         internal_error_response()
     }).unwrap();
 
-    match users::table
-        .select(User::as_select())
-        .load(conn)
-    {
+    // SIMPLE SYNTAX - no as_select()
+    match users::table.load::<User>(conn) {
         Ok(users_list) => {
             let user_responses: Vec<UserResponse> = users_list.into_iter().map(UserResponse::from).collect();
             success_response(user_responses, "Users retrieved successfully")

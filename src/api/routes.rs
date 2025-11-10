@@ -4,8 +4,10 @@ use crate::handlers;
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/api")
+            // User routes
             .route("/users", web::post().to(handlers::create_user))
             .route("/users", web::get().to(handlers::get_users))
+            // Vehicle routes
     );
 }
 

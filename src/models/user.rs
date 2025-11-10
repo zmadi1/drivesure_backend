@@ -2,11 +2,9 @@ use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
-use crate::schema::users;
 
-#[derive(Queryable, Selectable, Serialize, Deserialize, Debug, Identifiable)]
-#[diesel(table_name = users)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
+#[derive(Queryable, Serialize, Deserialize, Debug, Identifiable)]
+#[diesel(table_name = crate::schema::users)]
 pub struct User {
     pub id: Uuid,
     pub email: String,
@@ -15,13 +13,13 @@ pub struct User {
     pub first_name: Option<String>,
     pub last_name: Option<String>,
     pub phone: Option<String>,
-    pub is_verified: bool,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
+    pub is_verified: Option<bool>,      // CHANGED: Option<bool>
+    pub created_at: Option<DateTime<Utc>>, // CHANGED: Option
+    pub updated_at: Option<DateTime<Utc>>, // CHANGED: Option
 }
 
 #[derive(Insertable, Deserialize, Debug)]
-#[diesel(table_name = users)]
+#[diesel(table_name = crate::schema::users)]
 pub struct NewUser {
     pub email: String,
     pub password_hash: String,
@@ -62,8 +60,8 @@ impl From<User> for UserResponse {
             first_name: user.first_name,
             last_name: user.last_name,
             phone: user.phone,
-            is_verified: user.is_verified,
-            created_at: user.created_at,
+            is_verified: user.is_verified.unwrap_or(false), // Handle Option
+            created_at: user.created_at.unwrap_or(Utc::now()), // Handle Option
         }
     }
 }
