@@ -1,18 +1,31 @@
 use actix_web::web;
-use crate::handlers;
+use crate::handlers::{self, user, driver, payment, vehicle};
 
 pub fn config(cfg: &mut web::ServiceConfig) {
-    cfg.service(
-        web::scope("/api")
-            // User routes
-            .route("/users", web::post().to(handlers::create_user))
-            .route("/users", web::get().to(handlers::get_users))
-            // Vehicle routes
+    cfg.service(web::scope("/api")
+        // group subroutes
+        .service(
+            web::scope("/users")
+                .route("", web::post().to(user::create_user))
+                .route("", web::get().to(user::get_users)),
+        )
+        .service(
+            web::scope("/vehicles")
+                .route("", web::post().to(vehicle::create_vehicle))
+                .route("", web::get().to(vehicle::get_vehicles))
+                .route("/available", web::get().to(vehicle::get_available_vehicles))
+                .route("/{id}", web::get().to(vehicle::get_vehicle_by_id)),
+        )
+        .service(
+            web::scope("/drivers")
+                .route("/verify", web::post().to(driver::verify_driver)),
+        )
+        .service(
+            web::scope("/payments")
+                .route("/mandate", web::post().to(payment::create_mandate)),
+        )
+        .route("/health", web::get().to(health_check))
     );
-}
-
-pub fn health_config(cfg: &mut web::ServiceConfig) {
-    cfg.route("/health", web::get().to(health_check));
 }
 
 async fn health_check() -> actix_web::HttpResponse {
@@ -22,3 +35,4 @@ async fn health_check() -> actix_web::HttpResponse {
         "version": "0.1.0"
     }))
 }
+

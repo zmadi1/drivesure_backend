@@ -35,6 +35,27 @@ diesel::table! {
     }
 }
 
+// @generated automatically by Diesel CLI.
+
+diesel::table! {
+    users (id) {
+        id -> Int4,
+        name -> Varchar,
+        email -> Varchar,
+    }
+}
+
+diesel::table! {
+    vehicles (id) {
+        id -> Int4,
+        make -> Varchar,
+        model -> Varchar,
+        year -> Int4,
+    }
+}
+
+
+
 diesel::joinable!(driver_verifications -> users (user_id));
 
 diesel::allow_tables_to_appear_in_same_query!(driver_verifications, users,);
