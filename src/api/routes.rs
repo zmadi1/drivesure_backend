@@ -1,5 +1,5 @@
 use actix_web::web;
-use crate::handlers::{self, user, driver, payment, vehicle};
+use crate::handlers::{user, driver, payment, vehicle};
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(web::scope("/api")

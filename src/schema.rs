@@ -15,6 +15,27 @@ diesel::table! {
 }
 
 diesel::table! {
+    mandate_status (name) {
+        name -> Text,
+    }
+}
+
+diesel::table! {
+    payment_mandates (id) {
+        id -> Uuid,
+        vehicle_id -> Uuid,
+        owner_id -> Uuid,
+        driver_id -> Uuid,
+        amount_cents -> Int4,
+        retry_count -> Int2,
+        status -> mandate_status,
+        due_date -> Date,
+        created_at -> Timestamptz,
+        updated_at -> Timestamptz,
+    }
+}
+
+diesel::table! {
     users (id) {
         id -> Uuid,
         #[max_length = 255]
@@ -39,12 +60,27 @@ diesel::table! {
     vehicles (id) {
         id -> Uuid,
         owner_id -> Uuid,
+        make -> Text,
+        model -> Text,
+        year -> Int4,
         reg_number -> Text,
         imei -> Nullable<Text>,
-        is_available -> Nullable<Bool>,
+        can_immobilise -> Bool,
+        is_available -> Bool,
+        created_at -> Timestamptz,
+        updated_at -> Timestamptz,
     }
 }
 
 diesel::joinable!(driver_verifications -> users (user_id));
+diesel::joinable!(payment_mandates -> users (owner_id));
+diesel::joinable!(payment_mandates -> users (driver_id));
+diesel::joinable!(payment_mandates -> vehicles (vehicle_id));
 
-diesel::allow_tables_to_appear_in_same_query!(driver_verifications, users, vehicles,);
+diesel::allow_tables_to_appear_in_same_query!(
+    driver_verifications,
+    mandate_status,
+    payment_mandates,
+    users,
+    vehicles,
+);
