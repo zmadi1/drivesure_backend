@@ -1,11 +1,13 @@
 use actix_web::web;
-use crate::handlers;
+use crate::handlers::{user, vehicle};   // <- NEW
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/api")
-            .route("/users", web::post().to(handlers::create_user))
-            .route("/users", web::get().to(handlers::get_users))
+            .route("/users", web::post().to(user::create_user))
+            .route("/users", web::get().to(user::get_users))
+            .route("/users/{user_id}/vehicles", web::post().to(vehicle::register))
+            .route("/users/{user_id}/vehicles", web::get().to(vehicle::list_by_user)),
     );
 }
 

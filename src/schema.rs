@@ -14,3 +14,18 @@ diesel::table! {
         updated_at -> Timestamptz,
     }
 }
+
+
+// -- existing tables --
+diesel::table! {
+    vehicles (id) {
+        id -> Uuid,
+        owner_user_id -> Uuid,
+        plate_number -> Varchar,
+        make -> Varchar,
+        model -> Varchar,
+        year -> SmallInt,
+        created_at -> Timestamptz,
+        updated_at -> Timestamptz,
+    }
+}

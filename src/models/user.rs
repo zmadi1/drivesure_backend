@@ -4,7 +4,7 @@ use uuid::Uuid;
 use chrono::{DateTime, Utc};
 use crate::schema::users;
 
-#[derive(Queryable, Selectable, Serialize, Deserialize, Debug, Identifiable)]
+#[derive(Queryable, Selectable, Clone , Serialize, Deserialize, Debug, Identifiable)]
 #[diesel(table_name = users)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct User {

@@ -46,23 +46,15 @@ async fn welcome() -> actix_web::HttpResponse {
 */
 
 // src/main.rs
-mod models;
-mod handlers;
-mod utils;
-mod api;
-mod database;
-mod schema;
-
 use actix_web::{web, App, HttpServer};
-use database::establish_connection;
+use drivesure_backend::{api, database};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // Set up database connection pool and run migrations
-    let pool = establish_connection();
+    let pool = database::establish_connection();
 
     println!("🌈 DriveSure Backend - WITH EMBEDDED MIGRATIONS!");
-    println!("📍 http://127.0.0.1:8080");
+    println!("📍 http://127.0.0.1:8080 ");
     println!("🗄️  Database: PostgreSQL with embedded migrations");
     println!("🚀 Migrations run automatically on startup!");
     println!("========================");
